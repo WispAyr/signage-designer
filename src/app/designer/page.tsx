@@ -1026,16 +1026,16 @@ function SignContent({
           </div>
 
           {/* Operating Hours & Payment in a row */}
-          <div className="w-full flex gap-2 mb-2">
-            <div className="flex-1 bg-blue-50 border border-blue-200 rounded p-2">
-              <div className="text-xs font-bold text-blue-800">Hours</div>
-              <div className="text-xs text-blue-700">{metadata.operatingHours}</div>
+          <div className="w-full flex gap-2 mb-3">
+            <div className="flex-1 bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <div className="text-sm font-bold text-blue-800">Hours of Operation</div>
+              <div className="text-sm text-blue-700">{metadata.operatingHours}</div>
             </div>
-            <div className="flex-1 bg-green-50 border border-green-200 rounded p-2">
-              <div className="text-xs font-bold text-green-800">Payment</div>
+            <div className="flex-1 bg-green-50 border border-green-200 rounded-lg p-3">
+              <div className="text-sm font-bold text-green-800 mb-1">Payment</div>
               <div className="flex gap-1 flex-wrap">
                 {metadata.paymentMethods.map((method, index) => (
-                  <span key={index} className="bg-green-600 text-white text-[10px] px-1 py-0.5 rounded">
+                  <span key={index} className="bg-green-600 text-white text-xs px-2 py-1 rounded">
                     {method}
                   </span>
                 ))}
@@ -1044,30 +1044,30 @@ function SignContent({
           </div>
 
           {/* Small QR Code */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <QRCodeSVG 
               value={metadata.qrUrl} 
-              size={40}
+              size={56}
               level="M"
             />
-            <div className="text-[10px] text-gray-600">
+            <div className="text-sm text-gray-600">
               Scan to pay online
             </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="bg-lcpm-blue text-white p-2 text-left flex-shrink-0">
+        <div className="bg-lcpm-blue text-white p-3 text-left flex-shrink-0">
           <div className="flex justify-between items-center gap-2">
-            <div className="flex-1 text-[10px] leading-tight">
+            <div className="flex-1 text-xs leading-snug">
               <p className="font-medium">{metadata.companyName}</p>
               <p>Helpline: {metadata.helplineNumber}</p>
             </div>
-            <div className="flex gap-1">
-              <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center text-[8px] text-black font-bold">
+            <div className="flex gap-2">
+              <div className="w-9 h-9 bg-white rounded-full flex items-center justify-center text-[10px] text-black font-bold">
                 BPA
               </div>
-              <div className="w-6 h-6 bg-lcpm-orange rounded flex items-center justify-center text-[8px] text-white font-bold">
+              <div className="w-9 h-9 bg-lcpm-orange rounded flex items-center justify-center text-[10px] text-white font-bold">
                 LCPM
               </div>
             </div>
