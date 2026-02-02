@@ -693,17 +693,21 @@ function SignContent({
       </div>
 
       {/* Footer - always at bottom */}
-      <div className="bg-lcpm-blue text-white p-4 text-sm text-left">
-        <p>This car park is private property and is managed on behalf of the Client by {metadata.companyName}.</p>
-        <p>Company registration no: {metadata.companyRegNumber}</p>
-        <p>Vehicles left at Owners risk.</p>
-        <p>Helpline: {metadata.helplineNumber}</p>
-        <div className="flex justify-end gap-2 mt-3">
-          <div className="w-10 h-10 bg-lcpm-yellow rounded-full flex items-center justify-center text-sm text-black font-bold">
-            BPA
+      <div className="bg-lcpm-blue text-white p-5 text-left -mx-0">
+        <div className="flex justify-between items-start gap-4">
+          <div className="flex-1 text-sm leading-relaxed">
+            <p className="font-medium">This car park is private property and is managed on behalf of the Client by {metadata.companyName}.</p>
+            <p className="mt-1">Company registration no: {metadata.companyRegNumber}</p>
+            <p>Vehicles left at Owners risk.</p>
+            <p className="font-medium mt-1">Helpline: {metadata.helplineNumber}</p>
           </div>
-          <div className="w-10 h-10 bg-lcpm-orange rounded flex items-center justify-center text-sm text-white font-bold">
-            LCPM
+          <div className="flex flex-col gap-2 items-center">
+            <div className="w-14 h-14 bg-lcpm-yellow rounded-full flex items-center justify-center text-base text-black font-bold shadow-md">
+              BPA
+            </div>
+            <div className="w-14 h-14 bg-lcpm-orange rounded-lg flex items-center justify-center text-base text-white font-bold shadow-md">
+              LCPM
+            </div>
           </div>
         </div>
       </div>
