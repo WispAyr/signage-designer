@@ -4,6 +4,13 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
+interface SignStyling {
+  backgroundColor: string;
+  borderStyle: 'none' | 'solid' | 'checkered';
+  borderColor: string;
+  borderWidth: 4 | 8 | 12;
+}
+
 interface SignMetadata {
   siteName: string;
   siteCode: string;
@@ -16,6 +23,7 @@ interface SignMetadata {
   reducedPeriod: number;
   hasAnpr: boolean;
   website: string;
+  styling: SignStyling;
 }
 
 interface ComplianceResult {
@@ -24,6 +32,13 @@ interface ComplianceResult {
   passed: boolean;
   required: boolean;
 }
+
+const defaultStyling: SignStyling = {
+  backgroundColor: '#ffffff',
+  borderStyle: 'checkered',
+  borderColor: '#0077B5',
+  borderWidth: 12,
+};
 
 const defaultMetadata: SignMetadata = {
   siteName: '',
@@ -37,7 +52,188 @@ const defaultMetadata: SignMetadata = {
   reducedPeriod: 14,
   hasAnpr: true,
   website: 'www.localcarparkmanagement.com',
+  styling: defaultStyling,
 };
+
+// Background color presets
+const bgColorPresets = [
+  { color: '#ffffff', name: 'White' },
+  { color: '#f5f5f5', name: 'Light Gray' },
+  { color: '#e8e8e8', name: 'Gray' },
+  { color: '#fffef0', name: 'Cream' },
+  { color: '#fff3cd', name: 'Warm' },
+];
+
+// Border color presets (LCPM branding)
+const borderColorPresets = [
+  { color: '#0077B5', name: 'LCPM Blue' },
+  { color: '#F5A623', name: 'LCPM Orange' },
+  { color: '#004E7C', name: 'Dark Blue' },
+  { color: '#2C3E50', name: 'Charcoal' },
+  { color: '#000000', name: 'Black' },
+];
+
+function StylePanel({ 
+  styling, 
+  onStyleChange 
+}: { 
+  styling: SignStyling; 
+  onStyleChange: (styling: SignStyling) => void;
+}) {
+  return (
+    <div className="bg-white rounded-lg shadow p-4">
+      <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-lcpm-blue" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M4 2a2 2 0 00-2 2v11a3 3 0 106 0V4a2 2 0 00-2-2H4zm1 14a1 1 0 100-2 1 1 0 000 2zm5-1.757l4.9-4.9a2 2 0 000-2.828L13.485 5.1a2 2 0 00-2.828 0L10 5.757v8.486zM16 18H9.071l6-6H16a2 2 0 012 2v2a2 2 0 01-2 2z" clipRule="evenodd" />
+        </svg>
+        Sign Styling
+      </h2>
+      <div className="space-y-5">
+        {/* Background Color */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Background Color
+          </label>
+          <div className="flex items-center gap-2">
+            {bgColorPresets.map((preset) => (
+              <button
+                key={preset.color}
+                title={preset.name}
+                onClick={() => onStyleChange({ ...styling, backgroundColor: preset.color })}
+                className={`color-swatch ${styling.backgroundColor === preset.color ? 'selected' : ''}`}
+                style={{ 
+                  backgroundColor: preset.color,
+                  border: preset.color === '#ffffff' ? '2px solid #e5e7eb' : undefined
+                }}
+              />
+            ))}
+            <div className="relative">
+              <input
+                type="color"
+                value={styling.backgroundColor}
+                onChange={(e) => onStyleChange({ ...styling, backgroundColor: e.target.value })}
+                className="w-8 h-8 rounded cursor-pointer border-0"
+                title="Custom color"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Border Style */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Border Style
+          </label>
+          <div className="grid grid-cols-3 gap-2">
+            <button
+              onClick={() => onStyleChange({ ...styling, borderStyle: 'none' })}
+              className={`px-3 py-2 text-sm rounded-lg border-2 transition-all ${
+                styling.borderStyle === 'none'
+                  ? 'border-lcpm-blue bg-blue-50 text-lcpm-blue font-medium'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              None
+            </button>
+            <button
+              onClick={() => onStyleChange({ ...styling, borderStyle: 'solid' })}
+              className={`px-3 py-2 text-sm rounded-lg border-2 transition-all ${
+                styling.borderStyle === 'solid'
+                  ? 'border-lcpm-blue bg-blue-50 text-lcpm-blue font-medium'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              Solid
+            </button>
+            <button
+              onClick={() => onStyleChange({ ...styling, borderStyle: 'checkered' })}
+              className={`px-3 py-2 text-sm rounded-lg border-2 transition-all ${
+                styling.borderStyle === 'checkered'
+                  ? 'border-lcpm-blue bg-blue-50 text-lcpm-blue font-medium'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              Checkered
+            </button>
+          </div>
+        </div>
+
+        {/* Border Color (only for solid borders) */}
+        {styling.borderStyle === 'solid' && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Border Color
+            </label>
+            <div className="flex items-center gap-2">
+              {borderColorPresets.map((preset) => (
+                <button
+                  key={preset.color}
+                  title={preset.name}
+                  onClick={() => onStyleChange({ ...styling, borderColor: preset.color })}
+                  className={`color-swatch ${styling.borderColor === preset.color ? 'selected' : ''}`}
+                  style={{ backgroundColor: preset.color }}
+                />
+              ))}
+              <div className="relative">
+                <input
+                  type="color"
+                  value={styling.borderColor}
+                  onChange={(e) => onStyleChange({ ...styling, borderColor: e.target.value })}
+                  className="w-8 h-8 rounded cursor-pointer border-0"
+                  title="Custom color"
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Border Width */}
+        {styling.borderStyle !== 'none' && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Border Width
+            </label>
+            <div className="grid grid-cols-3 gap-2">
+              {([4, 8, 12] as const).map((width) => (
+                <button
+                  key={width}
+                  onClick={() => onStyleChange({ ...styling, borderWidth: width })}
+                  className={`px-3 py-2 text-sm rounded-lg border-2 transition-all ${
+                    styling.borderWidth === width
+                      ? 'border-lcpm-blue bg-blue-50 text-lcpm-blue font-medium'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  {width}px
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Checkered pattern preview */}
+        {styling.borderStyle === 'checkered' && (
+          <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+            <div className="text-xs text-gray-500 mb-2">Preview</div>
+            <div 
+              className="h-6 rounded"
+              style={{
+                backgroundImage: `repeating-linear-gradient(
+                  45deg,
+                  #0077B5 0px,
+                  #0077B5 8px,
+                  #F5A623 8px,
+                  #F5A623 16px
+                )`
+              }}
+            />
+            <div className="text-xs text-gray-500 mt-2">LCPM Blue / Orange diagonal pattern</div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 function DesignerContent() {
   const searchParams = useSearchParams();
@@ -143,6 +339,10 @@ function DesignerContent() {
     }
   };
 
+  const handleStyleChange = (styling: SignStyling) => {
+    setMetadata({ ...metadata, styling });
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
@@ -181,6 +381,12 @@ function DesignerContent() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Settings Panel */}
           <div className="lg:col-span-1 space-y-6">
+            {/* Styling Panel - NEW */}
+            <StylePanel 
+              styling={metadata.styling} 
+              onStyleChange={handleStyleChange}
+            />
+
             {/* Site Details */}
             <div className="bg-white rounded-lg shadow p-4">
               <h2 className="font-semibold text-gray-900 mb-4">Site Details</h2>
@@ -358,7 +564,7 @@ function DesignerContent() {
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow p-4">
               <h2 className="font-semibold text-gray-900 mb-4">Preview</h2>
-              <div className="border-2 border-dashed border-gray-200 rounded-lg p-8 min-h-[600px] flex items-center justify-center">
+              <div className="border-2 border-dashed border-gray-200 rounded-lg p-8 min-h-[600px] flex items-center justify-center bg-gray-50">
                 <SignPreview templateId={templateId} metadata={metadata} />
               </div>
             </div>
@@ -370,12 +576,77 @@ function DesignerContent() {
 }
 
 function SignPreview({ templateId, metadata }: { templateId: string; metadata: SignMetadata }) {
-  // Simplified preview - actual implementation would render full sign
+  const { styling } = metadata;
   const isEntrance = templateId === 'entrance-standard';
   const isTCs = templateId === 'terms-conditions-standard';
 
+  // Render checkered border version
+  if (styling.borderStyle === 'checkered') {
+    return (
+      <div 
+        className="w-full max-w-md shadow-lg sign-with-checkered-border"
+        style={{ padding: `${styling.borderWidth}px` }}
+      >
+        <div 
+          className="p-4 text-center relative"
+          style={{ 
+            backgroundColor: styling.backgroundColor,
+            aspectRatio: '210/297',
+          }}
+        >
+          <SignContent 
+            isEntrance={isEntrance} 
+            isTCs={isTCs} 
+            metadata={metadata} 
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // Build border styles for solid/none
+  const getSignStyles = (): React.CSSProperties => {
+    const styles: React.CSSProperties = {
+      backgroundColor: styling.backgroundColor,
+      aspectRatio: '210/297',
+    };
+
+    if (styling.borderStyle === 'solid') {
+      styles.borderWidth = `${styling.borderWidth}px`;
+      styles.borderStyle = 'solid';
+      styles.borderColor = styling.borderColor;
+    }
+
+    return styles;
+  };
+
   return (
-    <div className="w-full max-w-md bg-white border-8 border-checkered p-4 text-center" style={{ aspectRatio: '210/297' }}>
+    <div className="w-full max-w-md shadow-lg">
+      <div 
+        className="p-4 text-center relative"
+        style={getSignStyles()}
+      >
+        <SignContent 
+          isEntrance={isEntrance} 
+          isTCs={isTCs} 
+          metadata={metadata} 
+        />
+      </div>
+    </div>
+  );
+}
+
+function SignContent({ 
+  isEntrance, 
+  isTCs, 
+  metadata 
+}: { 
+  isEntrance: boolean; 
+  isTCs: boolean; 
+  metadata: SignMetadata;
+}) {
+  return (
+    <>
       {/* Header */}
       <div className="text-lg font-bold mb-2">
         {isTCs ? 'Terms & Conditions Apply' : 'PARKING REGULATIONS APPLY'}
@@ -385,11 +656,11 @@ function SignPreview({ templateId, metadata }: { templateId: string; metadata: S
 
       {isEntrance && (
         <>
-          <div className="text-lg font-bold text-orange-500 mb-2">
+          <div className="text-lg font-bold text-lcpm-orange mb-2">
             Pay to Park for All Vehicles
           </div>
           <div className="font-bold mb-4">BEYOND THIS POINT ONLY</div>
-          <div className="text-blue-600 font-bold mb-4">
+          <div className="text-lcpm-blue font-bold mb-4">
             {metadata.siteName || 'Parking for Customers'}
           </div>
         </>
@@ -397,7 +668,7 @@ function SignPreview({ templateId, metadata }: { templateId: string; metadata: S
 
       {isTCs && (
         <>
-          <div className="text-sm text-blue-600 font-bold mb-2">
+          <div className="text-sm text-lcpm-blue font-bold mb-2">
             Breach of ANY term or condition will result in a PARKING CHARGE of £{metadata.parkingCharge} reduced to £{metadata.reducedCharge} if paid within {metadata.reducedPeriod} days.
           </div>
           <div className="text-xs mb-4">
@@ -419,21 +690,21 @@ function SignPreview({ templateId, metadata }: { templateId: string; metadata: S
       )}
 
       {/* Footer */}
-      <div className="bg-blue-600 text-white p-3 text-xs text-left mt-auto">
+      <div className="bg-lcpm-blue text-white p-3 text-xs text-left mt-auto">
         <p>This car park is private property and is managed on behalf of the Client by {metadata.companyName}.</p>
         <p>Company registration no: {metadata.companyRegNumber}</p>
         <p>Vehicles left at Owners risk.</p>
         <p>Helpline: {metadata.helplineNumber}</p>
         <div className="flex justify-end gap-2 mt-2">
-          <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center text-xs text-black font-bold">
+          <div className="w-8 h-8 bg-lcpm-yellow rounded-full flex items-center justify-center text-xs text-black font-bold">
             BPA
           </div>
-          <div className="w-8 h-8 bg-orange-400 rounded flex items-center justify-center text-xs text-white font-bold">
+          <div className="w-8 h-8 bg-lcpm-orange rounded flex items-center justify-center text-xs text-white font-bold">
             LCPM
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
