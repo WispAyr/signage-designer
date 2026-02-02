@@ -994,86 +994,80 @@ function SignContent({
   if (isTariff) {
     return (
       <div className="flex flex-col h-full">
-        <div className="flex-1 flex flex-col items-center p-4 min-h-0 overflow-auto">
+        <div className="flex-1 flex flex-col items-center p-2 min-h-0">
           {/* Header */}
-          <div className="w-full bg-lcpm-blue text-white py-3 px-2 mb-4">
-            <div className="text-2xl font-bold tracking-wide">
+          <div className="w-full bg-lcpm-blue text-white py-2 px-2 mb-2">
+            <div className="text-xl font-bold tracking-wide">
               TARIFF
             </div>
-            <div className="text-sm">
+            <div className="text-xs">
               {metadata.siteName || 'Car Park'}
             </div>
           </div>
 
           {/* Rate Table */}
-          <div className="w-full bg-gray-50 border-2 border-lcpm-blue rounded-lg overflow-hidden mb-4">
-            <table className="w-full text-sm">
+          <div className="w-full bg-gray-50 border border-lcpm-blue rounded overflow-hidden mb-2">
+            <table className="w-full text-xs">
               <thead className="bg-lcpm-blue text-white">
                 <tr>
-                  <th className="py-2 px-3 text-left font-bold">Duration</th>
-                  <th className="py-2 px-3 text-right font-bold">Price</th>
+                  <th className="py-1 px-2 text-left font-bold">Duration</th>
+                  <th className="py-1 px-2 text-right font-bold">Price</th>
                 </tr>
               </thead>
               <tbody>
                 {metadata.tariffRates.map((rate, index) => (
                   <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                    <td className="py-2 px-3 text-left">{rate.duration}</td>
-                    <td className="py-2 px-3 text-right font-bold">{rate.price}</td>
+                    <td className="py-1 px-2 text-left">{rate.duration}</td>
+                    <td className="py-1 px-2 text-right font-bold">{rate.price}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
 
-          {/* Operating Hours */}
-          <div className="w-full bg-blue-50 border border-blue-200 rounded-lg p-3 mb-3">
-            <div className="text-sm font-bold text-blue-800">
-              Hours of Operation
+          {/* Operating Hours & Payment in a row */}
+          <div className="w-full flex gap-2 mb-2">
+            <div className="flex-1 bg-blue-50 border border-blue-200 rounded p-2">
+              <div className="text-xs font-bold text-blue-800">Hours</div>
+              <div className="text-xs text-blue-700">{metadata.operatingHours}</div>
             </div>
-            <div className="text-sm text-blue-700">
-              {metadata.operatingHours}
-            </div>
-          </div>
-
-          {/* Payment Methods */}
-          <div className="w-full bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
-            <div className="text-sm font-bold text-green-800 mb-1">
-              Payment Methods
-            </div>
-            <div className="flex gap-2 flex-wrap justify-center">
-              {metadata.paymentMethods.map((method, index) => (
-                <span key={index} className="bg-green-600 text-white text-xs px-2 py-1 rounded">
-                  {method}
-                </span>
-              ))}
+            <div className="flex-1 bg-green-50 border border-green-200 rounded p-2">
+              <div className="text-xs font-bold text-green-800">Payment</div>
+              <div className="flex gap-1 flex-wrap">
+                {metadata.paymentMethods.map((method, index) => (
+                  <span key={index} className="bg-green-600 text-white text-[10px] px-1 py-0.5 rounded">
+                    {method}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
 
           {/* Small QR Code */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <QRCodeSVG 
               value={metadata.qrUrl} 
-              size={60}
+              size={40}
               level="M"
             />
-            <div className="text-xs text-gray-600">
+            <div className="text-[10px] text-gray-600">
               Scan to pay online
             </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="bg-lcpm-blue text-white p-3 text-left flex-shrink-0">
-          <div className="flex justify-between items-start gap-2">
-            <div className="flex-1 text-xs leading-relaxed">
+        <div className="bg-lcpm-blue text-white p-2 text-left flex-shrink-0">
+          <div className="flex justify-between items-center gap-2">
+            <div className="flex-1 text-[10px] leading-tight">
               <p className="font-medium">{metadata.companyName}</p>
               <p>Helpline: {metadata.helplineNumber}</p>
             </div>
             <div className="flex gap-1">
-              <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-[10px] text-black font-bold">
+              <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center text-[8px] text-black font-bold">
                 BPA
               </div>
-              <div className="w-8 h-8 bg-lcpm-orange rounded flex items-center justify-center text-[10px] text-white font-bold">
+              <div className="w-6 h-6 bg-lcpm-orange rounded flex items-center justify-center text-[8px] text-white font-bold">
                 LCPM
               </div>
             </div>
