@@ -994,7 +994,7 @@ function SignContent({
   if (isTariff) {
     return (
       <div className="flex flex-col h-full">
-        <div className="flex-1 flex flex-col items-center p-2 min-h-0">
+        <div className="flex-1 flex flex-col items-center p-3">
           {/* Header */}
           <div className="w-full bg-lcpm-blue text-white py-2 px-2 mb-2">
             <div className="text-xl font-bold tracking-wide">
@@ -1057,17 +1057,18 @@ function SignContent({
         </div>
 
         {/* Footer */}
-        <div className="bg-lcpm-blue text-white p-3 text-left flex-shrink-0">
-          <div className="flex justify-between items-center gap-2">
-            <div className="flex-1 text-xs leading-snug">
+        <div className="bg-lcpm-blue text-white p-4 text-left flex-shrink-0 mt-auto">
+          <div className="flex justify-between items-start gap-3">
+            <div className="flex-1 text-sm leading-relaxed">
               <p className="font-medium">{metadata.companyName}</p>
               <p>Helpline: {metadata.helplineNumber}</p>
+              <p>{metadata.website}</p>
             </div>
             <div className="flex gap-2">
-              <div className="w-9 h-9 bg-white rounded-full flex items-center justify-center text-[10px] text-black font-bold">
+              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-xs text-black font-bold">
                 BPA
               </div>
-              <div className="w-9 h-9 bg-lcpm-orange rounded flex items-center justify-center text-[10px] text-white font-bold">
+              <div className="w-10 h-10 bg-lcpm-orange rounded flex items-center justify-center text-xs text-white font-bold">
                 LCPM
               </div>
             </div>
