@@ -588,7 +588,7 @@ function SignPreview({ templateId, metadata }: { templateId: string; metadata: S
         style={{ padding: `${styling.borderWidth}px` }}
       >
         <div 
-          className="p-4 text-center relative"
+          className="text-center relative h-full"
           style={{ 
             backgroundColor: styling.backgroundColor,
             aspectRatio: '210/297',
@@ -623,7 +623,7 @@ function SignPreview({ templateId, metadata }: { templateId: string; metadata: S
   return (
     <div className="w-full max-w-md shadow-lg">
       <div 
-        className="p-4 text-center relative"
+        className="text-center relative h-full"
         style={getSignStyles()}
       >
         <SignContent 
@@ -646,65 +646,68 @@ function SignContent({
   metadata: SignMetadata;
 }) {
   return (
-    <>
-      {/* Header */}
-      <div className="text-lg font-bold mb-2">
-        {isTCs ? 'Terms & Conditions Apply' : 'PARKING REGULATIONS APPLY'}
-      </div>
-      
-      <div className="text-2xl font-bold mb-4">PRIVATE LAND</div>
-
-      {isEntrance && (
-        <>
-          <div className="text-lg font-bold text-lcpm-orange mb-2">
-            Pay to Park for All Vehicles
-          </div>
-          <div className="font-bold mb-4">BEYOND THIS POINT ONLY</div>
-          <div className="text-lcpm-blue font-bold mb-4">
-            {metadata.siteName || 'Parking for Customers'}
-          </div>
-        </>
-      )}
-
-      {isTCs && (
-        <>
-          <div className="text-sm text-lcpm-blue font-bold mb-2">
-            Breach of ANY term or condition will result in a PARKING CHARGE of £{metadata.parkingCharge} reduced to £{metadata.reducedCharge} if paid within {metadata.reducedPeriod} days.
-          </div>
-          <div className="text-xs mb-4">
-            By entering or remaining on this land you agree to abide by the Terms and Conditions.
-          </div>
-        </>
-      )}
-
-      <div className="text-sm mb-4">
-        Terms & Conditions Apply
-        <br />
-        See signs in car park for details
-      </div>
-
-      {metadata.hasAnpr && (
-        <div className="text-xs mb-4">
-          This car park is monitored by ANPR camera technology
+    <div className="flex flex-col h-full justify-between">
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col justify-center py-4">
+        {/* Header */}
+        <div className="text-xl font-bold mb-3 tracking-wide">
+          {isTCs ? 'TERMS & CONDITIONS APPLY' : 'PARKING REGULATIONS APPLY'}
         </div>
-      )}
+        
+        <div className="text-3xl font-bold mb-6">PRIVATE LAND</div>
 
-      {/* Footer */}
-      <div className="bg-lcpm-blue text-white p-3 text-xs text-left mt-auto">
+        {isEntrance && (
+          <>
+            <div className="text-xl font-bold text-lcpm-orange mb-3">
+              Pay to Park for All Vehicles
+            </div>
+            <div className="text-lg font-bold mb-4">BEYOND THIS POINT ONLY</div>
+            <div className="text-xl text-lcpm-blue font-bold mb-6">
+              {metadata.siteName || 'Parking for Customers'}
+            </div>
+          </>
+        )}
+
+        {isTCs && (
+          <>
+            <div className="text-base text-lcpm-blue font-bold mb-3 px-2">
+              Breach of ANY term or condition will result in a PARKING CHARGE of £{metadata.parkingCharge} reduced to £{metadata.reducedCharge} if paid within {metadata.reducedPeriod} days.
+            </div>
+            <div className="text-sm mb-4">
+              By entering or remaining on this land you agree to abide by the Terms and Conditions.
+            </div>
+          </>
+        )}
+
+        <div className="text-base mb-4">
+          Terms & Conditions Apply
+          <br />
+          See signs in car park for details
+        </div>
+
+        {metadata.hasAnpr && (
+          <div className="text-sm mb-2">
+            This car park is monitored by ANPR camera technology
+          </div>
+        )}
+      </div>
+
+      {/* Footer - always at bottom */}
+      <div className="bg-lcpm-blue text-white p-4 text-sm text-left">
         <p>This car park is private property and is managed on behalf of the Client by {metadata.companyName}.</p>
         <p>Company registration no: {metadata.companyRegNumber}</p>
         <p>Vehicles left at Owners risk.</p>
         <p>Helpline: {metadata.helplineNumber}</p>
-        <div className="flex justify-end gap-2 mt-2">
-          <div className="w-8 h-8 bg-lcpm-yellow rounded-full flex items-center justify-center text-xs text-black font-bold">
+        <div className="flex justify-end gap-2 mt-3">
+          <div className="w-10 h-10 bg-lcpm-yellow rounded-full flex items-center justify-center text-sm text-black font-bold">
             BPA
           </div>
-          <div className="w-8 h-8 bg-lcpm-orange rounded flex items-center justify-center text-xs text-white font-bold">
+          <div className="w-10 h-10 bg-lcpm-orange rounded flex items-center justify-center text-sm text-white font-bold">
             LCPM
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
