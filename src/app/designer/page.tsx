@@ -872,8 +872,8 @@ function SignContent({
   // Disabled Parking Template
   if (isDisabled) {
     return (
-      <div className="flex flex-col h-full justify-between p-4">
-        <div className="flex-1 flex flex-col justify-center items-center">
+      <div className="flex flex-col h-full justify-between">
+        <div className="flex-1 flex flex-col justify-center items-center p-4">
           {/* Blue background header */}
           <div className="w-full bg-blue-600 text-white py-4 px-2 mb-4">
             <div className="text-7xl mb-2">♿</div>
@@ -909,7 +909,7 @@ function SignContent({
         </div>
 
         {/* Footer */}
-        <div className="bg-blue-600 text-white p-4 text-left -mx-4 -mb-4">
+        <div className="bg-blue-600 text-white p-4 text-left">
           <div className="flex justify-between items-start gap-2">
             <div className="flex-1 text-xs leading-relaxed">
               <p className="font-medium">Managed by {metadata.companyName}</p>
@@ -927,8 +927,8 @@ function SignContent({
   // EV Charging Template
   if (isEV) {
     return (
-      <div className="flex flex-col h-full justify-between p-4">
-        <div className="flex-1 flex flex-col justify-center items-center">
+      <div className="flex flex-col h-full justify-between">
+        <div className="flex-1 flex flex-col justify-center items-center p-4">
           {/* Green background header */}
           <div className="w-full bg-green-600 text-white py-4 px-2 mb-4">
             <div className="text-6xl mb-2">⚡</div>
@@ -971,7 +971,7 @@ function SignContent({
         </div>
 
         {/* Footer */}
-        <div className="bg-green-600 text-white p-4 text-left -mx-4 -mb-4">
+        <div className="bg-green-600 text-white p-4 text-left">
           <div className="flex justify-between items-start gap-2">
             <div className="flex-1 text-xs leading-relaxed">
               <p className="font-medium">Managed by {metadata.companyName}</p>
@@ -989,8 +989,8 @@ function SignContent({
   // Tariff Template
   if (isTariff) {
     return (
-      <div className="flex flex-col h-full justify-between p-4">
-        <div className="flex-1 flex flex-col items-center">
+      <div className="flex flex-col h-full justify-between">
+        <div className="flex-1 flex flex-col items-center p-4">
           {/* Header */}
           <div className="w-full bg-lcpm-blue text-white py-3 px-2 mb-4">
             <div className="text-2xl font-bold tracking-wide">
@@ -1059,7 +1059,7 @@ function SignContent({
         </div>
 
         {/* Footer */}
-        <div className="bg-lcpm-blue text-white p-3 text-left -mx-4 -mb-4">
+        <div className="bg-lcpm-blue text-white p-3 text-left">
           <div className="flex justify-between items-start gap-2">
             <div className="flex-1 text-xs leading-relaxed">
               <p className="font-medium">{metadata.companyName}</p>
