@@ -994,7 +994,7 @@ function SignContent({
   if (isTariff) {
     return (
       <div className="flex flex-col h-full">
-        <div className="flex-1 flex flex-col items-center p-3">
+        <div className="flex-1 flex flex-col items-center justify-evenly p-3">
           {/* Header */}
           <div className="w-full bg-lcpm-blue text-white py-2 px-2 mb-2">
             <div className="text-xl font-bold tracking-wide">
