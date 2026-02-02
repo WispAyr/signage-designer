@@ -809,10 +809,12 @@ function SignPreview({ templateId, metadata }: { templateId: string; metadata: S
         style={{ padding: `${styling.borderWidth}px` }}
       >
         <div 
-          className="text-center relative h-full"
+          className="text-center relative overflow-hidden"
           style={{ 
             backgroundColor: styling.backgroundColor,
             aspectRatio: '210/297',
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
           <SignContent 
@@ -829,6 +831,8 @@ function SignPreview({ templateId, metadata }: { templateId: string; metadata: S
     const styles: React.CSSProperties = {
       backgroundColor: styling.backgroundColor,
       aspectRatio: '210/297',
+      display: 'flex',
+      flexDirection: 'column' as const,
     };
 
     if (styling.borderStyle === 'solid') {
@@ -843,7 +847,7 @@ function SignPreview({ templateId, metadata }: { templateId: string; metadata: S
   return (
     <div className="w-full max-w-md shadow-lg">
       <div 
-        className="text-center relative h-full"
+        className="text-center relative overflow-hidden"
         style={getSignStyles()}
       >
         <SignContent 
@@ -989,8 +993,8 @@ function SignContent({
   // Tariff Template
   if (isTariff) {
     return (
-      <div className="flex flex-col h-full justify-between">
-        <div className="flex-1 flex flex-col items-center p-4">
+      <div className="flex flex-col h-full">
+        <div className="flex-1 flex flex-col items-center p-4 min-h-0 overflow-auto">
           {/* Header */}
           <div className="w-full bg-lcpm-blue text-white py-3 px-2 mb-4">
             <div className="text-2xl font-bold tracking-wide">
@@ -1059,7 +1063,7 @@ function SignContent({
         </div>
 
         {/* Footer */}
-        <div className="bg-lcpm-blue text-white p-3 text-left">
+        <div className="bg-lcpm-blue text-white p-3 text-left flex-shrink-0">
           <div className="flex justify-between items-start gap-2">
             <div className="flex-1 text-xs leading-relaxed">
               <p className="font-medium">{metadata.companyName}</p>
