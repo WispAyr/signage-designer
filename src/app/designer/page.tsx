@@ -3,12 +3,18 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { QRCodeSVG } from 'qrcode.react';
 
 interface SignStyling {
   backgroundColor: string;
   borderStyle: 'none' | 'solid' | 'checkered';
   borderColor: string;
   borderWidth: 4 | 8 | 12;
+}
+
+interface TariffRate {
+  duration: string;
+  price: string;
 }
 
 interface SignMetadata {
@@ -24,6 +30,14 @@ interface SignMetadata {
   hasAnpr: boolean;
   website: string;
   styling: SignStyling;
+  // New fields for additional templates
+  maxStay: string;
+  qrUrl: string;
+  qrLabel: string;
+  tariffRates: TariffRate[];
+  operatingHours: string;
+  paymentMethods: string[];
+  evInstructions: string;
 }
 
 interface ComplianceResult {
@@ -53,6 +67,20 @@ const defaultMetadata: SignMetadata = {
   hasAnpr: true,
   website: 'www.localcarparkmanagement.com',
   styling: defaultStyling,
+  // New fields for additional templates
+  maxStay: '3 hours',
+  qrUrl: 'https://pay.localcarparkmanagement.com',
+  qrLabel: 'Scan to Pay',
+  tariffRates: [
+    { duration: 'Up to 1 hour', price: '£2.00' },
+    { duration: 'Up to 2 hours', price: '£3.50' },
+    { duration: 'Up to 3 hours', price: '£5.00' },
+    { duration: 'Up to 4 hours', price: '£7.00' },
+    { duration: 'All day (max)', price: '£10.00' },
+  ],
+  operatingHours: '24 hours',
+  paymentMethods: ['Card', 'Phone', 'App'],
+  evInstructions: 'Connect charger before paying. Vehicles must be actively charging.',
 };
 
 // Background color presets
@@ -531,6 +559,201 @@ function DesignerContent() {
               </div>
             )}
 
+            {/* Disabled Parking Settings */}
+            {templateId === 'disabled-parking' && (
+              <div className="bg-white rounded-lg shadow p-4">
+                <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <span className="text-2xl">♿</span>
+                  Disabled Parking Settings
+                </h2>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Maximum Stay
+                    </label>
+                    <input
+                      type="text"
+                      value={metadata.maxStay}
+                      onChange={(e) => setMetadata({ ...metadata, maxStay: e.target.value })}
+                      placeholder="e.g., 3 hours"
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* EV Charging Settings */}
+            {templateId === 'ev-charging' && (
+              <div className="bg-white rounded-lg shadow p-4">
+                <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <span className="text-2xl">⚡</span>
+                  EV Charging Settings
+                </h2>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Maximum Stay
+                    </label>
+                    <input
+                      type="text"
+                      value={metadata.maxStay}
+                      onChange={(e) => setMetadata({ ...metadata, maxStay: e.target.value })}
+                      placeholder="e.g., 4 hours"
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Charging Instructions
+                    </label>
+                    <textarea
+                      value={metadata.evInstructions}
+                      onChange={(e) => setMetadata({ ...metadata, evInstructions: e.target.value })}
+                      placeholder="e.g., Connect charger before paying..."
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      rows={3}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Tariff Settings */}
+            {templateId === 'tariff-standard' && (
+              <div className="bg-white rounded-lg shadow p-4">
+                <h2 className="font-semibold text-gray-900 mb-4">Tariff Settings</h2>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Operating Hours
+                    </label>
+                    <input
+                      type="text"
+                      value={metadata.operatingHours}
+                      onChange={(e) => setMetadata({ ...metadata, operatingHours: e.target.value })}
+                      placeholder="e.g., 24 hours or Mon-Sat 8am-6pm"
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-lcpm-blue focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Rates
+                    </label>
+                    <div className="space-y-2">
+                      {metadata.tariffRates.map((rate, index) => (
+                        <div key={index} className="flex gap-2">
+                          <input
+                            type="text"
+                            value={rate.duration}
+                            onChange={(e) => {
+                              const newRates = [...metadata.tariffRates];
+                              newRates[index].duration = e.target.value;
+                              setMetadata({ ...metadata, tariffRates: newRates });
+                            }}
+                            placeholder="Duration"
+                            className="flex-1 px-2 py-1 text-sm border rounded focus:ring-1 focus:ring-lcpm-blue"
+                          />
+                          <input
+                            type="text"
+                            value={rate.price}
+                            onChange={(e) => {
+                              const newRates = [...metadata.tariffRates];
+                              newRates[index].price = e.target.value;
+                              setMetadata({ ...metadata, tariffRates: newRates });
+                            }}
+                            placeholder="£0.00"
+                            className="w-20 px-2 py-1 text-sm border rounded focus:ring-1 focus:ring-lcpm-blue"
+                          />
+                          <button
+                            onClick={() => {
+                              const newRates = metadata.tariffRates.filter((_, i) => i !== index);
+                              setMetadata({ ...metadata, tariffRates: newRates });
+                            }}
+                            className="px-2 text-red-500 hover:text-red-700"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        onClick={() => {
+                          setMetadata({
+                            ...metadata,
+                            tariffRates: [...metadata.tariffRates, { duration: '', price: '' }]
+                          });
+                        }}
+                        className="text-sm text-lcpm-blue hover:text-blue-700"
+                      >
+                        + Add rate
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Payment Methods (comma separated)
+                    </label>
+                    <input
+                      type="text"
+                      value={metadata.paymentMethods.join(', ')}
+                      onChange={(e) => setMetadata({ 
+                        ...metadata, 
+                        paymentMethods: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
+                      })}
+                      placeholder="e.g., Card, Phone, App"
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-lcpm-blue focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      QR Code URL
+                    </label>
+                    <input
+                      type="url"
+                      value={metadata.qrUrl}
+                      onChange={(e) => setMetadata({ ...metadata, qrUrl: e.target.value })}
+                      placeholder="https://pay.example.com"
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-lcpm-blue focus:border-transparent"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* QR Code Settings */}
+            {templateId === 'internal-qr' && (
+              <div className="bg-white rounded-lg shadow p-4">
+                <h2 className="font-semibold text-gray-900 mb-4">QR Code Settings</h2>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      QR Code URL *
+                    </label>
+                    <input
+                      type="url"
+                      value={metadata.qrUrl}
+                      onChange={(e) => setMetadata({ ...metadata, qrUrl: e.target.value })}
+                      placeholder="https://pay.example.com"
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-lcpm-blue focus:border-transparent"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">The URL the QR code will link to</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Label Text
+                    </label>
+                    <input
+                      type="text"
+                      value={metadata.qrLabel}
+                      onChange={(e) => setMetadata({ ...metadata, qrLabel: e.target.value })}
+                      placeholder="e.g., Scan to Pay"
+                      className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-lcpm-blue focus:border-transparent"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Compliance Status */}
             <div className="bg-white rounded-lg shadow p-4">
               <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
@@ -577,8 +800,6 @@ function DesignerContent() {
 
 function SignPreview({ templateId, metadata }: { templateId: string; metadata: SignMetadata }) {
   const { styling } = metadata;
-  const isEntrance = templateId === 'entrance-standard';
-  const isTCs = templateId === 'terms-conditions-standard';
 
   // Render checkered border version
   if (styling.borderStyle === 'checkered') {
@@ -595,8 +816,7 @@ function SignPreview({ templateId, metadata }: { templateId: string; metadata: S
           }}
         >
           <SignContent 
-            isEntrance={isEntrance} 
-            isTCs={isTCs} 
+            templateId={templateId}
             metadata={metadata} 
           />
         </div>
@@ -627,8 +847,7 @@ function SignPreview({ templateId, metadata }: { templateId: string; metadata: S
         style={getSignStyles()}
       >
         <SignContent 
-          isEntrance={isEntrance} 
-          isTCs={isTCs} 
+          templateId={templateId}
           metadata={metadata} 
         />
       </div>
@@ -637,14 +856,268 @@ function SignPreview({ templateId, metadata }: { templateId: string; metadata: S
 }
 
 function SignContent({ 
-  isEntrance, 
-  isTCs, 
+  templateId,
   metadata 
 }: { 
-  isEntrance: boolean; 
-  isTCs: boolean; 
+  templateId: string;
   metadata: SignMetadata;
 }) {
+  const isEntrance = templateId === 'entrance-standard';
+  const isTCs = templateId === 'terms-conditions-standard';
+  const isDisabled = templateId === 'disabled-parking';
+  const isEV = templateId === 'ev-charging';
+  const isTariff = templateId === 'tariff-standard';
+  const isQR = templateId === 'internal-qr';
+
+  // Disabled Parking Template
+  if (isDisabled) {
+    return (
+      <div className="flex flex-col h-full justify-between p-4">
+        <div className="flex-1 flex flex-col justify-center items-center">
+          {/* Blue background header */}
+          <div className="w-full bg-blue-600 text-white py-4 px-2 mb-4">
+            <div className="text-7xl mb-2">♿</div>
+            <div className="text-2xl font-bold tracking-wide">
+              BLUE BADGE HOLDERS ONLY
+            </div>
+          </div>
+          
+          <div className="text-xl font-bold mb-4 text-blue-700">
+            {metadata.siteName || 'Disabled Parking Bay'}
+          </div>
+
+          <div className="bg-blue-50 border-2 border-blue-600 rounded-lg p-4 mb-4 w-full">
+            <div className="text-lg font-bold text-blue-800 mb-2">
+              Maximum Stay: {metadata.maxStay}
+            </div>
+            <div className="text-sm text-blue-700">
+              Badge must be clearly displayed on dashboard
+            </div>
+          </div>
+
+          <div className="bg-red-50 border-2 border-red-500 rounded-lg p-3 w-full">
+            <div className="text-sm font-bold text-red-600">
+              ⚠️ WARNING: Misuse of disabled parking bays may result in a Parking Charge Notice of £{metadata.parkingCharge}
+            </div>
+          </div>
+
+          {metadata.hasAnpr && (
+            <div className="text-xs text-gray-600 mt-4">
+              This car park is monitored by ANPR camera technology
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="bg-blue-600 text-white p-4 text-left -mx-4 -mb-4">
+          <div className="flex justify-between items-start gap-2">
+            <div className="flex-1 text-xs leading-relaxed">
+              <p className="font-medium">Managed by {metadata.companyName}</p>
+              <p>Helpline: {metadata.helplineNumber}</p>
+            </div>
+            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-xs text-black font-bold">
+              BPA
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // EV Charging Template
+  if (isEV) {
+    return (
+      <div className="flex flex-col h-full justify-between p-4">
+        <div className="flex-1 flex flex-col justify-center items-center">
+          {/* Green background header */}
+          <div className="w-full bg-green-600 text-white py-4 px-2 mb-4">
+            <div className="text-6xl mb-2">⚡</div>
+            <div className="text-xl font-bold tracking-wide">
+              ELECTRIC VEHICLE CHARGING ONLY
+            </div>
+          </div>
+          
+          <div className="text-lg font-bold mb-4 text-green-700">
+            {metadata.siteName || 'EV Charging Bay'}
+          </div>
+
+          <div className="bg-green-50 border-2 border-green-600 rounded-lg p-4 mb-4 w-full">
+            <div className="text-base font-bold text-green-800 mb-2">
+              Charging Instructions
+            </div>
+            <div className="text-sm text-green-700">
+              {metadata.evInstructions}
+            </div>
+          </div>
+
+          <div className="bg-yellow-50 border-2 border-yellow-500 rounded-lg p-3 w-full mb-4">
+            <div className="text-sm font-bold text-yellow-700">
+              ⚠️ Vehicles MUST be actively charging
+            </div>
+            <div className="text-xs text-yellow-600 mt-1">
+              Non-charging vehicles may receive a Parking Charge Notice
+            </div>
+          </div>
+
+          <div className="text-sm text-gray-600">
+            Maximum Stay: {metadata.maxStay}
+          </div>
+
+          {metadata.hasAnpr && (
+            <div className="text-xs text-gray-500 mt-2">
+              This car park is monitored by ANPR camera technology
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="bg-green-600 text-white p-4 text-left -mx-4 -mb-4">
+          <div className="flex justify-between items-start gap-2">
+            <div className="flex-1 text-xs leading-relaxed">
+              <p className="font-medium">Managed by {metadata.companyName}</p>
+              <p>Helpline: {metadata.helplineNumber}</p>
+            </div>
+            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-xs text-black font-bold">
+              BPA
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Tariff Template
+  if (isTariff) {
+    return (
+      <div className="flex flex-col h-full justify-between p-4">
+        <div className="flex-1 flex flex-col items-center">
+          {/* Header */}
+          <div className="w-full bg-lcpm-blue text-white py-3 px-2 mb-4">
+            <div className="text-2xl font-bold tracking-wide">
+              TARIFF
+            </div>
+            <div className="text-sm">
+              {metadata.siteName || 'Car Park'}
+            </div>
+          </div>
+
+          {/* Rate Table */}
+          <div className="w-full bg-gray-50 border-2 border-lcpm-blue rounded-lg overflow-hidden mb-4">
+            <table className="w-full text-sm">
+              <thead className="bg-lcpm-blue text-white">
+                <tr>
+                  <th className="py-2 px-3 text-left font-bold">Duration</th>
+                  <th className="py-2 px-3 text-right font-bold">Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                {metadata.tariffRates.map((rate, index) => (
+                  <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                    <td className="py-2 px-3 text-left">{rate.duration}</td>
+                    <td className="py-2 px-3 text-right font-bold">{rate.price}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Operating Hours */}
+          <div className="w-full bg-blue-50 border border-blue-200 rounded-lg p-3 mb-3">
+            <div className="text-sm font-bold text-blue-800">
+              Hours of Operation
+            </div>
+            <div className="text-sm text-blue-700">
+              {metadata.operatingHours}
+            </div>
+          </div>
+
+          {/* Payment Methods */}
+          <div className="w-full bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+            <div className="text-sm font-bold text-green-800 mb-1">
+              Payment Methods
+            </div>
+            <div className="flex gap-2 flex-wrap justify-center">
+              {metadata.paymentMethods.map((method, index) => (
+                <span key={index} className="bg-green-600 text-white text-xs px-2 py-1 rounded">
+                  {method}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Small QR Code */}
+          <div className="flex items-center gap-3">
+            <QRCodeSVG 
+              value={metadata.qrUrl} 
+              size={60}
+              level="M"
+            />
+            <div className="text-xs text-gray-600">
+              Scan to pay online
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="bg-lcpm-blue text-white p-3 text-left -mx-4 -mb-4">
+          <div className="flex justify-between items-start gap-2">
+            <div className="flex-1 text-xs leading-relaxed">
+              <p className="font-medium">{metadata.companyName}</p>
+              <p>Helpline: {metadata.helplineNumber}</p>
+            </div>
+            <div className="flex gap-1">
+              <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-[10px] text-black font-bold">
+                BPA
+              </div>
+              <div className="w-8 h-8 bg-lcpm-orange rounded flex items-center justify-center text-[10px] text-white font-bold">
+                LCPM
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Internal QR Template
+  if (isQR) {
+    return (
+      <div className="flex flex-col h-full justify-center items-center p-6">
+        {/* Main QR Code - large and centered */}
+        <div className="flex-1 flex flex-col justify-center items-center">
+          <div className="bg-white p-4 rounded-xl shadow-lg border-4 border-lcpm-blue">
+            <QRCodeSVG 
+              value={metadata.qrUrl} 
+              size={180}
+              level="H"
+              includeMargin={true}
+            />
+          </div>
+          
+          <div className="text-2xl font-bold text-lcpm-blue mt-6 mb-2">
+            {metadata.qrLabel}
+          </div>
+          
+          <div className="text-base text-gray-600 mb-4">
+            {metadata.siteName || 'Scan with your phone camera'}
+          </div>
+
+          <div className="text-sm text-gray-500 text-center max-w-xs">
+            Point your camera at the QR code above
+          </div>
+        </div>
+
+        {/* Minimal Footer */}
+        <div className="w-full text-center pb-2">
+          <div className="text-xs text-gray-500">
+            {metadata.companyName} | {metadata.helplineNumber}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Default templates (Entrance and T&Cs)
   return (
     <div className="flex flex-col h-full justify-between">
       {/* Main Content */}
